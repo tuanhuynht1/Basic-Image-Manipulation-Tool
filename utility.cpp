@@ -100,7 +100,28 @@ void utility::whiteOut(image &src, image &tgt, vector<Region> regions){
 	for(auto roi : regions){
 		for(int i = roi.i; i < roi.i + roi.ilen; i++){
 			for(int j = roi.j; j < roi.j + roi.jlen; j++){
-				tgt.setPixel(i,j,255);
+				//set to white
+				tgt.setPixel(i,j,MAXRGB);
+			}
+		}
+	}
+}
+
+void utility::thresholding(image &src, image &tgt, int t1, int t2, vector<Region> regions){
+	//duplicates the source
+	tgt.copyImage(src);
+	for(auto roi : regions){
+		for(int i = roi.i; i < roi.i + roi.ilen; i++){
+			for(int j = roi.j; j < roi.j + roi.jlen; j++){
+				int intensity = tgt.getPixel(i,j);
+				if (intensity >= t1 && intensity < t2){
+					//set to white
+					tgt.setPixel(i,j,MAXRGB);
+				}
+				else{
+					//set black
+					tgt.setPixel(i,j,MINRGB);
+				} 
 			}
 		}
 	}

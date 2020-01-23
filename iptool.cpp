@@ -79,7 +79,6 @@ int main (int argc, char** argv)
 				}
 			}
 			utility::whiteOut(src,tgt,regions);
-			regions.clear();
 		}
 		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
 		else if(strncasecmp(op,"thresholding",MAXLEN) == 0){
@@ -104,8 +103,7 @@ int main (int argc, char** argv)
 					cout << t1 << t2 << endl;
 				}
 			}
-			//threshold function
-			regions.clear();
+			utility::thresholding(src,tgt,t1,t2,regions);
 		}
 
 		else{
@@ -113,8 +111,16 @@ int main (int argc, char** argv)
 			break;
 		}
 		tgt.save(outfile);
+		regions.clear();
 	}
 	fclose(fp);
 	return 0;
 }
 
+/*TODO
+
+	-specify range in index
+	-threshold range
+	-limit number of regions 
+
+*/
