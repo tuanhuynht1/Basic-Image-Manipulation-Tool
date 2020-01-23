@@ -17,9 +17,8 @@ struct imageData
 
 class Region{
 	public:
-	int x,y,x0,y0;
-	Region(int _x, int _y, int _x0, int _y0) : x(_x), y(_y), x0(_x0), y0(_y0) {}
-	void print(){cout << x << y << x0 << y0 << endl;}
+	int ilen, jlen, i, j;
+	Region(int rows, int cols, int i_origin, int j_origin) : ilen(rows), jlen(cols), i(i_origin), j(j_origin) {}
 };
 
 class image 

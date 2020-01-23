@@ -61,27 +61,24 @@ int main (int argc, char** argv)
 		cout << numberOfRegions << endl;
 
 		for (int i = 0; i < numberOfRegions; i++){
-			int x, y, x0, y0;
+			int rows, cols, i_origin, j_origin;
 			if (fgets(str,MAXLEN,fp) != NULL){
 				pch = strtok(str, " ");
-				x = atoi(pch);
+				i_origin = atoi(pch);
 
 				pch = strtok(NULL, " ");
-				y = atoi(pch);
+				j_origin = atoi(pch);
 
 				pch = strtok(NULL, " ");
-				x0 = atoi(pch);
+				rows = atoi(pch);
 
 				pch = strtok(NULL, " ");
-				y0 = atoi(pch);
-				regions.push_back(Region(x,y,x0,y0));
+				cols = atoi(pch);
+				regions.push_back(Region(rows,cols,i_origin,j_origin));
 			}
 		}		
-
+		utility::whiteOut(src,tgt,regions);
 		tgt.save(outfile);
-		for (auto r : regions){
-			r.print();
-		}
 		regions.clear();
 	}
 	fclose(fp);

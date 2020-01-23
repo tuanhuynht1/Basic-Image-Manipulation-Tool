@@ -92,3 +92,9 @@ void utility::addThreshold(image &src, image &tgt, int threshold, int value){
 		}
 	}
 }
+
+//--------------------- ROI Functions ----------------------------//
+void utility::whiteOut(image &src, image &tgt, vector<Region> roi){
+	//duplicates the source
+	tgt.copyImage(src);
+}
