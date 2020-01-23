@@ -94,7 +94,14 @@ void utility::addThreshold(image &src, image &tgt, int threshold, int value){
 }
 
 //--------------------- ROI Functions ----------------------------//
-void utility::whiteOut(image &src, image &tgt, vector<Region> roi){
+void utility::whiteOut(image &src, image &tgt, vector<Region> regions){
 	//duplicates the source
 	tgt.copyImage(src);
+	for(auto roi : regions){
+		for(int i = roi.i; i < roi.i + roi.ilen; i++){
+			for(int j = roi.j; j < roi.j + roi.jlen; j++){
+				tgt.setPixel(i,j,255);
+			}
+		}
+	}
 }
