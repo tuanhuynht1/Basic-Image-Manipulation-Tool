@@ -15,10 +15,13 @@ struct imageData
    int numRows, numColumns; 
 };
 
-class Region{
-	public:
+struct Region{
 	int ilen, jlen, i, j;
 	Region(int rows, int cols, int i_origin, int j_origin) : ilen(rows), jlen(cols), i(i_origin), j(j_origin) {}
+};
+
+struct Color{
+   int r,g,b;
 };
 
 class image 

@@ -62,26 +62,9 @@ int main (int argc, char** argv)
 		pch = strtok(NULL, " ");
 		numberOfRegions = atoi(pch);
 		cout << numberOfRegions << endl;
-		//---------------------------------------------------- WHITE OUT ------------------------//
-		if(strncasecmp(op,"white",MAXLEN) == 0){
-			for (int i = 0; i < numberOfRegions; i++){
-				if (fgets(str,MAXLEN,fp) != NULL){
-					//parse region attributes
-					pch = strtok(str, " ");
-					i_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					j_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					rows = atoi(pch);
-					pch = strtok(NULL, " ");
-					cols = atoi(pch);
-					regions.push_back(Region(rows,cols,i_origin,j_origin));
-				}
-			}
-			utility::whiteOut(src,tgt,regions);
-		}
+
 		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
-		else if(strncasecmp(op,"thresholding",MAXLEN) == 0){
+		if(strncasecmp(op,"thresholding",MAXLEN) == 0){
 			int t1, t2;
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
@@ -105,7 +88,29 @@ int main (int argc, char** argv)
 			}
 			utility::thresholding(src,tgt,t1,t2,regions);
 		}
-
+		//----------------------------------------------------- WHITE OUT ------------------------//
+		else if(strncasecmp(op,"white",MAXLEN) == 0){
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					//parse region attributes
+					pch = strtok(str, " ");
+					i_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					j_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					rows = atoi(pch);
+					pch = strtok(NULL, " ");
+					cols = atoi(pch);
+					regions.push_back(Region(rows,cols,i_origin,j_origin));
+				}
+			}
+			utility::whiteOut(src,tgt,regions);
+		}
+		//-------------------------------------------------------- COPY IMAGE ------------------//
+		else if(strncasecmp(op,"copy",MAXLEN) == 0){
+			tgt.copyImage(src);
+		}
+		//------------------------------------------------------------ INVALID -----------------//
 		else{
 			cout << "Undefined function: [" << op <<"]?" << endl;
 			break;
@@ -117,10 +122,3 @@ int main (int argc, char** argv)
 	return 0;
 }
 
-/*TODO
-
-	-specify range in index
-	-threshold range
-	-limit number of regions 
-
-*/

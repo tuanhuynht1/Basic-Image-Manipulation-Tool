@@ -2,5 +2,5 @@ baboon.pgm testing1.pgm white 3
 1 1 50 50
 100 200 350 200
 52 52 100 100
-baboon.pgm testing2.pgm thresholding 1
-175 123 300 300 50 100
+frog.ppm testing2.ppm white 1
+100 123 300 300 50 100
