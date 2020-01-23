@@ -119,6 +119,7 @@ int main (int argc, char** argv)
 		regions.clear();
 	}
 	fclose(fp);
+	
 	return 0;
 }
 

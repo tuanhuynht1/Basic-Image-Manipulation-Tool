@@ -22,6 +22,7 @@ struct Region{
 
 struct Color{
    int r,g,b;
+   Color(int R, int G, int B) : r(R), g(G), b(B) {}
 };
 
 class image 

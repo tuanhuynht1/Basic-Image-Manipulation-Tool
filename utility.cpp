@@ -92,7 +92,13 @@ void utility::addThreshold(image &src, image &tgt, int threshold, int value){
 		}
 	}
 }
-
+//----------------------Helper Distance Function ----------------//
+float utility::colorDistance(Color A, Color B){
+	float R2 = pow(A.r - B.r,2);
+	float G2 = pow(A.g - B.g,2);
+	float B2 = pow(A.b - B.b,2);
+	return sqrt(R2 + G2 + B2);
+}
 //--------------------- ROI Functions ----------------------------//
 void utility::whiteOut(image &src, image &tgt, vector<Region> regions){
 	//duplicates the source

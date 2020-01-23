@@ -20,6 +20,7 @@ class utility
 		//HW1 functions of ROI
 		static void whiteOut(image &src, image &tgt, vector<Region> regions);
 		static void thresholding(image &src, image &tgt, int t1, int t2, vector<Region> regions);
+		static float colorDistance(Color A, Color B);
 };
 
 #endif
