@@ -1,5 +1,6 @@
-baboon.pgm testing1.pgm binarize 2
+baboon.pgm testing1.pgm white 3
 1 1 50 50
 100 200 350 200
-baboon.pgm testing2.pgm binarize 1
-175 123 100 100
+52 52 100 100
+baboon.pgm testing2.pgm white 1
+175 123 100 100 50 100

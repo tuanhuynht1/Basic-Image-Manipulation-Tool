@@ -33,6 +33,7 @@ int main (int argc, char** argv)
 	FILE *fp;
 	char str[MAXLEN];
 	char outfile[MAXLEN];
+	char *op;
 	char *pch;
 
 	vector<Region> regions;
@@ -42,44 +43,76 @@ int main (int argc, char** argv)
 		exit(1);
 	}
 
-	int numberOfRegions;
+	int rows, cols, i_origin, j_origin, numberOfRegions;
 
 	while(fgets(str,MAXLEN,fp) != NULL) {
+		//parse source
 		pch = strtok(str, " ");
 		src.read(pch);
 		cout << pch << " ";
-		
+		//parse target
 		pch = strtok(NULL, " ");
 		strcpy(outfile, pch);
 		cout << pch << " ";
-
+		//parse operation
 		pch = strtok(NULL, " ");
+		op = pch;
 		cout << pch << " ";
-
+		//parse number of regions
 		pch = strtok(NULL, " ");
 		numberOfRegions = atoi(pch);
 		cout << numberOfRegions << endl;
-
-		for (int i = 0; i < numberOfRegions; i++){
-			int rows, cols, i_origin, j_origin;
-			if (fgets(str,MAXLEN,fp) != NULL){
-				pch = strtok(str, " ");
-				i_origin = atoi(pch);
-
-				pch = strtok(NULL, " ");
-				j_origin = atoi(pch);
-
-				pch = strtok(NULL, " ");
-				rows = atoi(pch);
-
-				pch = strtok(NULL, " ");
-				cols = atoi(pch);
-				regions.push_back(Region(rows,cols,i_origin,j_origin));
+		//---------------------------------------------------- WHITE OUT ------------------------//
+		if(strncasecmp(op,"white",MAXLEN) == 0){
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					//parse region attributes
+					pch = strtok(str, " ");
+					i_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					j_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					rows = atoi(pch);
+					pch = strtok(NULL, " ");
+					cols = atoi(pch);
+					regions.push_back(Region(rows,cols,i_origin,j_origin));
+				}
 			}
-		}		
-		utility::whiteOut(src,tgt,regions);
+			utility::whiteOut(src,tgt,regions);
+			regions.clear();
+		}
+		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
+		else if(strncasecmp(op,"thresholding",MAXLEN) == 0){
+			int t1, t2;
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					//parse region attributes
+					pch = strtok(str, " ");
+					i_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					j_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					rows = atoi(pch);
+					pch = strtok(NULL, " ");
+					cols = atoi(pch);
+					regions.push_back(Region(rows,cols,i_origin,j_origin));
+					//parse threshold values
+					pch = strtok(NULL, " ");
+					t1 = atoi(pch);
+					pch = strtok(NULL, " ");
+					t2 = atoi(pch);
+					cout << t1 << t2 << endl;
+				}
+			}
+			//threshold function
+			regions.clear();
+		}
+
+		else{
+			cout << "Undefined function: [" << op <<"]?" << endl;
+			break;
+		}
 		tgt.save(outfile);
-		regions.clear();
 	}
 	fclose(fp);
 	return 0;
