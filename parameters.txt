@@ -1,0 +1,5 @@
+baboon.pgm testing1.pgm binarize 2
+1 2 3 4
+10 20 30 40
+baboon.pgm testing2.pgm binarize 1
+12 23 34 45
