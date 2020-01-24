@@ -19,7 +19,7 @@ class utility
 		static void addThreshold(image &src, image &tgt, int threshold, int value);
 		//HW1 functions of ROI
 		static void whiteOut(image &src, image &tgt, vector<Region> regions);
-		static void thresholding(image &src, image &tgt, int t1, int t2, vector<Region> regions);
+		static void thresholding(image &tgt, int t1, int t2, Region roi);
 		static float colorDistance(Color A, Color B);
 };
 

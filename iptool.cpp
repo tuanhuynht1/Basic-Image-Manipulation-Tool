@@ -36,7 +36,7 @@ int main (int argc, char** argv)
 	char *op;
 	char *pch;
 
-	vector<Region> regions;
+	//vector<Region> regions;
 
 	if ((fp = fopen(argv[1],"r")) == NULL) {
 		fprintf(stderr, "Can't open file: %s\n", argv[1]);
@@ -66,6 +66,8 @@ int main (int argc, char** argv)
 		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
 		if(strncasecmp(op,"thresholding",MAXLEN) == 0){
 			int t1, t2;
+			//copy source image to target
+			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
 					//parse region attributes
@@ -77,35 +79,56 @@ int main (int argc, char** argv)
 					rows = atoi(pch);
 					pch = strtok(NULL, " ");
 					cols = atoi(pch);
-					regions.push_back(Region(rows,cols,i_origin,j_origin));
+					//initialize region
+					Region roi(rows,cols,i_origin,j_origin);
 					//parse threshold values
 					pch = strtok(NULL, " ");
 					t1 = atoi(pch);
 					pch = strtok(NULL, " ");
 					t2 = atoi(pch);
-					cout << t1 << t2 << endl;
+					//call operation on region
+					utility::thresholding(tgt,t1,t2,roi);
 				}
 			}
-			utility::thresholding(src,tgt,t1,t2,regions);
 		}
+		//----------------------------------------------------- COLOR BINARIZATION -------------------//
+		// else if(strncasecmp(op,"bicolor",MAXLEN) == 0){
+		// 	int r, g, b, tc, dc;
+		// 	for (int i = 0; i < numberOfRegions; i++){
+		// 		if (fgets(str,MAXLEN,fp) != NULL){
+		// 			//parse 3 channels of desired color
+		// 			pch = strtok(str, " ");
+		// 			r = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			g = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			b = atoi(pch);
+		// 			//parse TC and DC
+		// 			pch = strtok(NULL, " ");
+		// 			tc = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			dc = atoi(pch);
+		// 		}
+		// 	}
+		// }
 		//----------------------------------------------------- WHITE OUT ------------------------//
-		else if(strncasecmp(op,"white",MAXLEN) == 0){
-			for (int i = 0; i < numberOfRegions; i++){
-				if (fgets(str,MAXLEN,fp) != NULL){
-					//parse region attributes
-					pch = strtok(str, " ");
-					i_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					j_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					rows = atoi(pch);
-					pch = strtok(NULL, " ");
-					cols = atoi(pch);
-					regions.push_back(Region(rows,cols,i_origin,j_origin));
-				}
-			}
-			utility::whiteOut(src,tgt,regions);
-		}
+		// else if(strncasecmp(op,"white",MAXLEN) == 0){
+		// 	for (int i = 0; i < numberOfRegions; i++){
+		// 		if (fgets(str,MAXLEN,fp) != NULL){
+		// 			//parse region attributes
+		// 			pch = strtok(str, " ");
+		// 			i_origin = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			j_origin = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			rows = atoi(pch);
+		// 			pch = strtok(NULL, " ");
+		// 			cols = atoi(pch);
+		// 			regions.push_back(Region(rows,cols,i_origin,j_origin));
+		// 		}
+		// 	}
+		// 	utility::whiteOut(src,tgt,regions);
+		// }
 		//-------------------------------------------------------- COPY IMAGE ------------------//
 		else if(strncasecmp(op,"copy",MAXLEN) == 0){
 			tgt.copyImage(src);
@@ -116,10 +139,10 @@ int main (int argc, char** argv)
 			break;
 		}
 		tgt.save(outfile);
-		regions.clear();
+		// regions.clear();
 	}
 	fclose(fp);
-	
+
 	return 0;
 }
 
