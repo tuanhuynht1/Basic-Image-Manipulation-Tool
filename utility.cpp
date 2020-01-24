@@ -129,3 +129,26 @@ void utility::thresholding(image &tgt, int t1, int t2, Region roi){
 	}
 	cout << t1 << t2 << endl;
 }
+
+void utility::colorBinarization(image &tgt, Color c, int tc, int dc, Region roi){
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			//get color at point i,j
+			Color pixelColor(tgt.getPixel(i,j,RED), tgt.getPixel(i,j,GREEN),tgt.getPixel(i,j,BLUE));
+			//get distance from c
+			float distance = colorDistance(c,pixelColor);
+			//set to black if larger than threshold
+			if(distance > tc){
+				tgt.setPixel(i,j,RED,MINRGB);
+				tgt.setPixel(i,j,GREEN,MINRGB);
+				tgt.setPixel(i,j,BLUE,MINRGB);
+			}
+			//else, increase by dc
+			else{
+				tgt.setPixel(i,j,RED,checkValue(tgt.getPixel(i,j,RED) + dc));
+				tgt.setPixel(i,j,GREEN,checkValue(tgt.getPixel(i,j,GREEN) + dc));
+				tgt.setPixel(i,j,BLUE,checkValue(tgt.getPixel(i,j,BLUE) + dc));
+			}
+		}
+	}
+}

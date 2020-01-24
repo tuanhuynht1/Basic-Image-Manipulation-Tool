@@ -19,7 +19,6 @@
 
 #include "utility.h"
 #include "image.h"
-#include <strings.h>
 #include <string.h>
 #include <vector>
 
@@ -92,25 +91,41 @@ int main (int argc, char** argv)
 			}
 		}
 		//----------------------------------------------------- COLOR BINARIZATION -------------------//
-		// else if(strncasecmp(op,"bicolor",MAXLEN) == 0){
-		// 	int r, g, b, tc, dc;
-		// 	for (int i = 0; i < numberOfRegions; i++){
-		// 		if (fgets(str,MAXLEN,fp) != NULL){
-		// 			//parse 3 channels of desired color
-		// 			pch = strtok(str, " ");
-		// 			r = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			g = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			b = atoi(pch);
-		// 			//parse TC and DC
-		// 			pch = strtok(NULL, " ");
-		// 			tc = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			dc = atoi(pch);
-		// 		}
-		// 	}
-		// }
+		else if(strncasecmp(op,"bicolor",MAXLEN) == 0){
+			int r, g, b, tc, dc;
+			//copy source image to target
+			tgt.copyImage(src);
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					//parse region attributes
+					pch = strtok(str, " ");
+					i_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					j_origin = atoi(pch);
+					pch = strtok(NULL, " ");
+					rows = atoi(pch);
+					pch = strtok(NULL, " ");
+					cols = atoi(pch);
+					//initialize region
+					Region roi(rows,cols,i_origin,j_origin);
+					//parse 3 channels of desired color
+					pch = strtok(NULL, " ");
+					r = atoi(pch);
+					pch = strtok(NULL, " ");
+					g = atoi(pch);
+					pch = strtok(NULL, " ");
+					b = atoi(pch);
+					//parse TC and DC
+					pch = strtok(NULL, " ");
+					tc = atoi(pch);
+					pch = strtok(NULL, " ");
+					dc = atoi(pch);
+					//call operation on region
+					cout << r << g << b << tc << dc << endl;
+					utility::colorBinarization(tgt,Color(r,g,b),tc,dc,roi);
+				}
+			}
+		}
 		//----------------------------------------------------- WHITE OUT ------------------------//
 		// else if(strncasecmp(op,"white",MAXLEN) == 0){
 		// 	for (int i = 0; i < numberOfRegions; i++){
