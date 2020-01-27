@@ -3,7 +3,9 @@
 
 #include "image.h"
 #include <sstream>
+#include <vector>
 #include <math.h>
+#include <string.h>
 
 class utility
 {
@@ -18,6 +20,9 @@ class utility
 		//HW0 new function
 		static void addThreshold(image &src, image &tgt, int threshold, int value);
 
+
+		//HW1 parse helper function
+		static vector<char*> parse(char* str, int argc);
 		//HW1 test function
 		static void whiteOut(image &src, image &tgt, vector<Region> regions);
 		//HW1 Thresholding function

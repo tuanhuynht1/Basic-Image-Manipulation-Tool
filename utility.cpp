@@ -220,3 +220,15 @@ void utility::oneDimensionalSmoothing(image &tgt, int ws, Region roi){
 		}
 	}
 }
+
+vector<char*> utility::parse(char* str, int argC){
+	vector<char*> arguments;
+	char *pch;
+	pch = strtok(str, " ");
+	arguments.push_back(pch);
+	for(int i = 1; i < argC; i++){
+		pch = strtok(NULL, " ");
+		arguments.push_back(pch);
+	}
+	return arguments;
+}

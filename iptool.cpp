@@ -19,7 +19,6 @@
 
 #include "utility.h"
 #include "image.h"
-#include <string.h>
 #include <vector>
 
 using namespace std;
@@ -32,8 +31,6 @@ int main (int argc, char** argv)
 	FILE *fp;
 	char str[MAXLEN];
 	char outfile[MAXLEN];
-	char *op;
-	char *pch;
 
 	//vector<Region> regions;
 
@@ -42,25 +39,17 @@ int main (int argc, char** argv)
 		exit(1);
 	}
 
+	vector<char*> argV;
 	int rows, cols, i_origin, j_origin, numberOfRegions;
+	char *op, *pch;
 
 	while(fgets(str,MAXLEN,fp) != NULL) {
-		//parse source
-		pch = strtok(str, " ");
-		src.read(pch);
-		cout << pch << " ";
-		//parse target
-		pch = strtok(NULL, " ");
-		strcpy(outfile, pch);
-		cout << pch << " ";
-		//parse operation
-		pch = strtok(NULL, " ");
-		op = pch;
-		cout << pch << " ";
-		//parse number of regions
-		pch = strtok(NULL, " ");
-		numberOfRegions = atoi(pch);
-		cout << numberOfRegions << endl;
+
+		argV = utility::parse(str,4);
+		src.read(argV[0]);
+		strcpy(outfile,argV[1]);
+		op = argV[2];
+		numberOfRegions = atoi(argV[3]);
 
 		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
 		if(strncasecmp(op,"thresholding",MAXLEN) == 0){
@@ -69,23 +58,14 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
-					//parse region attributes
-					pch = strtok(str, " ");
-					i_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					j_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					rows = atoi(pch);
-					pch = strtok(NULL, " ");
-					cols = atoi(pch);
-					//initialize region
+					argV = utility::parse(str,6);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					t1 = atoi(argV[4]);
+					t2 = atoi(argV[5]);
 					Region roi(rows,cols,i_origin,j_origin);
-					//parse threshold values
-					pch = strtok(NULL, " ");
-					t1 = atoi(pch);
-					pch = strtok(NULL, " ");
-					t2 = atoi(pch);
-					//call operation on region
 					utility::thresholding(tgt,t1,t2,roi);
 				}
 			}
@@ -97,31 +77,53 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
-					//parse region attributes
-					pch = strtok(str, " ");
-					i_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					j_origin = atoi(pch);
-					pch = strtok(NULL, " ");
-					rows = atoi(pch);
-					pch = strtok(NULL, " ");
-					cols = atoi(pch);
-					//initialize region
+					argV = utility::parse(str,9);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					r = atoi(argV[4]);
+					g = atoi(argV[5]);
+					b = atoi(argV[6]);
+					tc = atoi(argV[7]);
+					dc = atoi(argV[8]);
 					Region roi(rows,cols,i_origin,j_origin);
-					//parse 3 channels of desired color
-					pch = strtok(NULL, " ");
-					r = atoi(pch);
-					pch = strtok(NULL, " ");
-					g = atoi(pch);
-					pch = strtok(NULL, " ");
-					b = atoi(pch);
-					//parse TC and DC
-					pch = strtok(NULL, " ");
-					tc = atoi(pch);
-					pch = strtok(NULL, " ");
-					dc = atoi(pch);
-					//call operation on region
 					utility::colorBinarization(tgt,Color(r,g,b),tc,dc,roi);
+				}
+			}
+		}
+		//----------------------------------------------------- 2D SMOOTHING -------------------//
+		else if(strncasecmp(op,"smooth2D",MAXLEN) == 0){
+			int ws;
+			//copy source image to target
+			tgt.copyImage(src);
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					argV = utility::parse(str,5);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					ws = atoi(argV[4]);
+					Region roi(rows,cols,i_origin,j_origin);
+					utility::twoDimensionalSmoothing(tgt,ws,roi);
+				}
+			}
+		}
+		else if(strncasecmp(op,"smooth1D",MAXLEN) == 0){
+			int ws;
+			//copy source image to target
+			tgt.copyImage(src);
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					argV = utility::parse(str,5);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					ws = atoi(argV[4]);
+					Region roi(rows,cols,i_origin,j_origin);
+					utility::oneDimensionalSmoothing(tgt,ws,roi);
 				}
 			}
 		}
@@ -135,17 +137,17 @@ int main (int argc, char** argv)
 	fclose(fp);
 
 	
-	image input, output;
-	char filename[11] = "baboon.pgm";
-	input.read(filename);
+	// image input, output;
+	// char filename[11] = "baboon.pgm";
+	// input.read(filename);
 
-	output.copyImage(input);
-	utility::twoDimensionalSmoothing(output,9,Region(300,300,150,200));
-	output.save("testing3.pgm");
+	// output.copyImage(input);
+	// utility::twoDimensionalSmoothing(output,9,Region(300,300,150,200));
+	// output.save("testing3.pgm");
 
-	output.copyImage(input);
-	utility::oneDimensionalSmoothing(output,9,Region(300,300,150,200));
-	output.save("testing4.pgm");
+	// output.copyImage(input);
+	// utility::oneDimensionalSmoothing(output,9,Region(300,300,150,200));
+	// output.save("testing4.pgm");
 	return 0;
 }
 
