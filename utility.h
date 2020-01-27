@@ -17,6 +17,7 @@ class utility
 		static void scale(image &src, image &tgt, float ratio);
 		//HW0 new function
 		static void addThreshold(image &src, image &tgt, int threshold, int value);
+
 		//HW1 test function
 		static void whiteOut(image &src, image &tgt, vector<Region> regions);
 		//HW1 Thresholding function
@@ -30,6 +31,9 @@ class utility
 		static int averageIntensity(image &img, Region window);
 		//HW1 2D smoother
 		static void twoDimensionalSmoothing(image &tgt, int ws, Region roi);
+		//HW1 1D smoother 
+		static void oneDimensionalSmoothing(image &tgt, int ws, Region roi);
+
 };
 
 #endif

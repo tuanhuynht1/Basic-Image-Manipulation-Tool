@@ -131,7 +131,6 @@ int main (int argc, char** argv)
 			break;
 		}
 		tgt.save(outfile);
-		// regions.clear();
 	}
 	fclose(fp);
 
@@ -139,10 +138,14 @@ int main (int argc, char** argv)
 	image input, output;
 	char filename[11] = "baboon.pgm";
 	input.read(filename);
+
 	output.copyImage(input);
 	utility::twoDimensionalSmoothing(output,9,Region(300,300,150,200));
 	output.save("testing3.pgm");
 
+	output.copyImage(input);
+	utility::oneDimensionalSmoothing(output,9,Region(300,300,150,200));
+	output.save("testing4.pgm");
 	return 0;
 }
 

@@ -172,12 +172,12 @@ Region utility::get1DWindow(image &img, int ws, dimension dim, int i, int j){
 		case ROW:
 			max = img.getNumberOfColumns();
 			if (j + offset < max && j - offset >= 0){
-				return Region(i,j - offset, 1, ws);
+				return Region(1, ws,i,j - offset);
 			}
 		case COL:
 			max = img.getNumberOfRows();
 			if (i + offset < max && i - offset >= 0){
-				return Region(i - offset, j, ws, 1);
+				return Region(ws, 1,i - offset, j);
 			}
 	}
 	return Region(1,1,i,j);
@@ -200,6 +200,23 @@ void utility::twoDimensionalSmoothing(image &tgt, int ws, Region roi){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
 			Region window = getSquareWindow(tgt,ws,i,j);
 			tgt.setPixel(i,j,averageIntensity(original,window));
+		}
+	}
+}
+
+void utility::oneDimensionalSmoothing(image &tgt, int ws, Region roi){
+	image original(tgt);
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			Region row = get1DWindow(tgt,ws,ROW,i,j);
+			tgt.setPixel(i,j,averageIntensity(original,row));
+		}
+	}
+	original.copyImage(tgt);
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			Region col = get1DWindow(tgt,ws,COL,i,j);
+			tgt.setPixel(i,j,averageIntensity(original,col));
 		}
 	}
 }
