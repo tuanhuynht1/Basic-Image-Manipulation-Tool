@@ -8,6 +8,7 @@
 using namespace std;
 
 enum channel{RED, GREEN, BLUE, GREY=RED, GRAY=GREY};
+enum dimension{ ROW, COL};
 
 struct imageData
 {
@@ -30,6 +31,7 @@ class image
 private:
    imageData data;
    int getint(FILE *fp);
+   friend class Utility;
    
 public:
    image();

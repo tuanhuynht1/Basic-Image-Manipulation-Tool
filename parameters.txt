@@ -1,2 +1,5 @@
 frog.ppm testing1.ppm bicolor 1
 45 183 150 150 210 200 60 100 50
+baboon.pgm testing2.pgm thresholding 2
+10 100 80 250 50 150
+120 120 350 320 180 220

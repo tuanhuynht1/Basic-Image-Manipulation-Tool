@@ -99,7 +99,7 @@ float utility::colorDistance(Color A, Color B){
 	float B2 = pow(A.b - B.b,2);
 	return sqrt(R2 + G2 + B2);
 }
-//--------------------- ROI Functions ----------------------------//
+//--------------------- Point Functions ----------------------------//
 void utility::whiteOut(image &src, image &tgt, vector<Region> regions){
 	//duplicates the source
 	tgt.copyImage(src);
@@ -149,6 +149,57 @@ void utility::colorBinarization(image &tgt, Color c, int tc, int dc, Region roi)
 				tgt.setPixel(i,j,GREEN,checkValue(tgt.getPixel(i,j,GREEN) + dc));
 				tgt.setPixel(i,j,BLUE,checkValue(tgt.getPixel(i,j,BLUE) + dc));
 			}
+		}
+	}
+}
+
+//----------------------------------------------------------- Localized Functions ------------------------//
+Region utility::getSquareWindow(image &img, int ws, int i, int j){
+	int offset = ws / 2;
+	int imax = img.getNumberOfRows();
+	int jmax = img.getNumberOfColumns();
+	if(i + offset >= imax || i - offset < 0 || j + offset >= jmax || j - offset < 0){
+		return Region(1,1,i,j);
+	}
+	else{
+		return Region(ws, ws, i - offset, j - offset);
+	}
+}
+
+Region utility::get1DWindow(image &img, int ws, dimension dim, int i, int j){
+	int max, offset = ws / 2;
+	switch (dim){
+		case ROW:
+			max = img.getNumberOfColumns();
+			if (j + offset < max && j - offset >= 0){
+				return Region(i,j - offset, 1, ws);
+			}
+		case COL:
+			max = img.getNumberOfRows();
+			if (i + offset < max && i - offset >= 0){
+				return Region(i - offset, j, ws, 1);
+			}
+	}
+	return Region(1,1,i,j);
+}
+
+int utility::averageIntensity(image &img, Region window){
+	int pixels = 0, sum = 0;
+	for (int i = window.i; i < window.i + window.ilen; i++){
+		for(int j = window.j; j < window.j + window.jlen; j++){
+			pixels++;
+			sum += img.getPixel(i,j);
+		}
+	}
+	return sum / pixels;
+}
+
+void utility::twoDimensionalSmoothing(image &tgt, int ws, Region roi){
+	image original(tgt);
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			Region window = getSquareWindow(tgt,ws,i,j);
+			tgt.setPixel(i,j,averageIntensity(original,window));
 		}
 	}
 }

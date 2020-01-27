@@ -121,32 +121,9 @@ int main (int argc, char** argv)
 					pch = strtok(NULL, " ");
 					dc = atoi(pch);
 					//call operation on region
-					cout << r << g << b << tc << dc << endl;
 					utility::colorBinarization(tgt,Color(r,g,b),tc,dc,roi);
 				}
 			}
-		}
-		//----------------------------------------------------- WHITE OUT ------------------------//
-		// else if(strncasecmp(op,"white",MAXLEN) == 0){
-		// 	for (int i = 0; i < numberOfRegions; i++){
-		// 		if (fgets(str,MAXLEN,fp) != NULL){
-		// 			//parse region attributes
-		// 			pch = strtok(str, " ");
-		// 			i_origin = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			j_origin = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			rows = atoi(pch);
-		// 			pch = strtok(NULL, " ");
-		// 			cols = atoi(pch);
-		// 			regions.push_back(Region(rows,cols,i_origin,j_origin));
-		// 		}
-		// 	}
-		// 	utility::whiteOut(src,tgt,regions);
-		// }
-		//-------------------------------------------------------- COPY IMAGE ------------------//
-		else if(strncasecmp(op,"copy",MAXLEN) == 0){
-			tgt.copyImage(src);
 		}
 		//------------------------------------------------------------ INVALID -----------------//
 		else{
@@ -157,6 +134,14 @@ int main (int argc, char** argv)
 		// regions.clear();
 	}
 	fclose(fp);
+
+	
+	image input, output;
+	char filename[11] = "baboon.pgm";
+	input.read(filename);
+	output.copyImage(input);
+	utility::twoDimensionalSmoothing(output,9,Region(300,300,150,200));
+	output.save("testing3.pgm");
 
 	return 0;
 }
