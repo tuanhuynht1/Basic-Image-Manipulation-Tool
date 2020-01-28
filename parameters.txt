@@ -7,4 +7,4 @@ baboon.pgm testing3.pgm smooth2D 2
 150 200 250 250 30
 0 0 100 512 15
 baboon.pgm testing4.pgm smooth1D 1
-150 200 300 300 9
+5 5 200 200 9

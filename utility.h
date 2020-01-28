@@ -7,6 +7,9 @@
 #include <math.h>
 #include <string.h>
 
+enum dimension{ ROW, COL};
+enum DPkeys { SUM, EDGE};
+
 class utility
 {
 	public:
@@ -38,7 +41,9 @@ class utility
 		static void twoDimensionalSmoothing(image &tgt, int ws, Region roi);
 		//HW1 1D smoother 
 		static void oneDimensionalSmoothing(image &tgt, int ws, Region roi);
-
+		//HW1 incremental
+		static void incrementalSmoothing(image &tgt, int ws, Region roi);
+		static int oneDimSum(image &img, Region window);
 };
 
 #endif

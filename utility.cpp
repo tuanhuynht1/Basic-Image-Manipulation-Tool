@@ -99,6 +99,18 @@ float utility::colorDistance(Color A, Color B){
 	float B2 = pow(A.b - B.b,2);
 	return sqrt(R2 + G2 + B2);
 }
+//----------------------Helper Parse Function ----------------//
+vector<char*> utility::parse(char* str, int argC){
+	vector<char*> arguments;
+	char *pch;
+	pch = strtok(str, " ");
+	arguments.push_back(pch);
+	for(int i = 1; i < argC; i++){
+		pch = strtok(NULL, " ");
+		arguments.push_back(pch);
+	}
+	return arguments;
+}
 //--------------------- Point Functions ----------------------------//
 void utility::whiteOut(image &src, image &tgt, vector<Region> regions){
 	//duplicates the source
@@ -210,25 +222,95 @@ void utility::oneDimensionalSmoothing(image &tgt, int ws, Region roi){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
 			Region row = get1DWindow(tgt,ws,ROW,i,j);
 			tgt.setPixel(i,j,averageIntensity(original,row));
+			// cout << tgt.getPixel(i,j) << " ";
 		}
+		// cout << endl;
 	}
+	// cout << "--------------------------" << endl;
 	original.copyImage(tgt);
 	for(int i = roi.i; i < roi.i + roi.ilen; i++){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
 			Region col = get1DWindow(tgt,ws,COL,i,j);
 			tgt.setPixel(i,j,averageIntensity(original,col));
+			// cout << tgt.getPixel(i,j) << " ";
 		}
+		// cout << endl;
 	}
+	// cout << "--------------------------" << endl;
 }
 
-vector<char*> utility::parse(char* str, int argC){
-	vector<char*> arguments;
-	char *pch;
-	pch = strtok(str, " ");
-	arguments.push_back(pch);
-	for(int i = 1; i < argC; i++){
-		pch = strtok(NULL, " ");
-		arguments.push_back(pch);
+int utility::oneDimSum(image &img, Region window){
+	int sum = 0;
+	//sum along column
+	if(window.jlen == 1){
+		for(int i = window.i; i < window.i + window.ilen; i++){
+			sum += img.getPixel(i,window.j);
+		}
 	}
-	return arguments;
+	//sum along row
+	else if (window.ilen == 1) {
+		for(int j = window.j; j < window.j + window.jlen; j++){
+			sum += img.getPixel(window.i,j);
+		}
+	}
+	return sum;
 }
+
+void utility::incrementalSmoothing(image &tgt, int ws, Region roi){
+	image original(tgt);
+	int offset = ws / 2;
+	int sum = 0, prev, next;
+	//horizontal convolution
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			//initialize pixel of first column of each row
+			if(j == roi.j){
+				Region row = get1DWindow(tgt,ws,ROW,i,j);
+				sum = oneDimSum(original, row);
+				prev = row.j;
+				next = row.j + row.jlen;
+			}
+			else{
+				//new sum = prev sum - prev edge + new edge
+				sum = sum - original.getPixel(i,prev) + original.getPixel(i,next);
+				prev++;
+				next++;
+			}
+			tgt.setPixel(i,j,sum/ws);
+			// cout << tgt.getPixel(i,j) << " "; 
+		}
+		// cout << endl;;
+	}
+	// cout << "---------------" << endl;
+	original.copyImage(tgt);
+	//vertical convolution
+	for(int j = roi.j; j < roi.j + roi.jlen; j++){
+		for(int i = roi.i; i < roi.i + roi.ilen; i++){
+			//initialize pixel of first column of each row
+			if(i == roi.i){
+				Region col = get1DWindow(tgt,ws,COL,i,j);
+				sum = oneDimSum(original, col);
+				prev = col.i;
+				next = col.i + col.ilen;
+			}
+			else{
+				//new sum = prev sum - prev edge + new edge
+				sum = sum - original.getPixel(prev,j) + original.getPixel(next,j);
+				prev++;
+				next++;
+			}
+			tgt.setPixel(i,j,sum/ws);
+		}
+	}
+
+	for(int i = roi.i; i < roi.i + roi.ilen; i++){
+		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			// cout << tgt.getPixel(i,j) << " "; 
+		}
+		// cout << endl;
+	}
+
+	
+}
+
+

@@ -8,7 +8,6 @@
 using namespace std;
 
 enum channel{RED, GREEN, BLUE, GREY=RED, GRAY=GREY};
-enum dimension{ ROW, COL};
 
 struct imageData
 {

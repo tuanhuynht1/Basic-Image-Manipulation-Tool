@@ -44,12 +44,13 @@ int main (int argc, char** argv)
 	char *op, *pch;
 
 	while(fgets(str,MAXLEN,fp) != NULL) {
-
+		
+		//parse line into argument Vector for each operation
 		argV = utility::parse(str,4);
-		src.read(argV[0]);
-		strcpy(outfile,argV[1]);
-		op = argV[2];
-		numberOfRegions = atoi(argV[3]);
+		src.read(argV[0]);					//input file
+		strcpy(outfile,argV[1]);			//output file
+		op = argV[2];						//operation
+		numberOfRegions = atoi(argV[3]);	//number of regions to operate on
 
 		//---------------------------------------------------- DOUBLE THRESHOLDING ----------------//
 		if(strncasecmp(op,"thresholding",MAXLEN) == 0){
@@ -110,6 +111,7 @@ int main (int argc, char** argv)
 				}
 			}
 		}
+		//----------------------------------------------------- 1D SMOOTHING -------------------//
 		else if(strncasecmp(op,"smooth1D",MAXLEN) == 0){
 			int ws;
 			//copy source image to target
@@ -135,19 +137,21 @@ int main (int argc, char** argv)
 		tgt.save(outfile);
 	}
 	fclose(fp);
+	char f[] = "baboon.pgm";
+	tgt.read(f);
+	Region r(200,200,5,5);
+	// cout << tgt.getPixel(5,5) << endl;
+	// for(int i = r.i ; i < r.i + r.ilen; i++){
+	// 	for(int j = r.j - 1; j < r.j + r.jlen + 1; j++){
+	// 		cout << tgt.getPixel(r.i,j) << " ";
+	// 	}
+	// 	cout << endl;
+	// }
+	// cout << "---------" << endl;
+	cout << "incremental" << endl;
+	utility::incrementalSmoothing(tgt,9,r);
+	tgt.save("testing5.pgm");
 
-	
-	// image input, output;
-	// char filename[11] = "baboon.pgm";
-	// input.read(filename);
-
-	// output.copyImage(input);
-	// utility::twoDimensionalSmoothing(output,9,Region(300,300,150,200));
-	// output.save("testing3.pgm");
-
-	// output.copyImage(input);
-	// utility::oneDimensionalSmoothing(output,9,Region(300,300,150,200));
-	// output.save("testing4.pgm");
 	return 0;
 }
 
