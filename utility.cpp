@@ -139,7 +139,6 @@ void utility::thresholding(image &tgt, int t1, int t2, Region roi){
 			} 
 		}
 	}
-	cout << t1 << t2 << endl;
 }
 
 void utility::colorBinarization(image &tgt, Color c, int tc, int dc, Region roi){
@@ -222,21 +221,15 @@ void utility::oneDimensionalSmoothing(image &tgt, int ws, Region roi){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
 			Region row = get1DWindow(tgt,ws,ROW,i,j);
 			tgt.setPixel(i,j,averageIntensity(original,row));
-			// cout << tgt.getPixel(i,j) << " ";
 		}
-		// cout << endl;
 	}
-	// cout << "--------------------------" << endl;
 	original.copyImage(tgt);
 	for(int i = roi.i; i < roi.i + roi.ilen; i++){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
 			Region col = get1DWindow(tgt,ws,COL,i,j);
 			tgt.setPixel(i,j,averageIntensity(original,col));
-			// cout << tgt.getPixel(i,j) << " ";
 		}
-		// cout << endl;
 	}
-	// cout << "--------------------------" << endl;
 }
 
 int utility::oneDimSum(image &img, Region window){
@@ -260,9 +253,14 @@ void utility::incrementalSmoothing(image &tgt, int ws, Region roi){
 	image original(tgt);
 	int offset = ws / 2;
 	int sum = 0, prev, next;
+	int ilim = tgt.getNumberOfRows(), jlim = tgt.getNumberOfColumns();
 	//horizontal convolution
 	for(int i = roi.i; i < roi.i + roi.ilen; i++){
 		for(int j = roi.j; j < roi.j + roi.jlen; j++){
+			//edge detection
+			if(j + offset >= jlim){
+				continue;
+			}
 			//initialize pixel of first column of each row
 			if(j == roi.j){
 				Region row = get1DWindow(tgt,ws,ROW,i,j);
@@ -277,15 +275,16 @@ void utility::incrementalSmoothing(image &tgt, int ws, Region roi){
 				next++;
 			}
 			tgt.setPixel(i,j,sum/ws);
-			// cout << tgt.getPixel(i,j) << " "; 
 		}
-		// cout << endl;;
 	}
-	// cout << "---------------" << endl;
 	original.copyImage(tgt);
 	//vertical convolution
 	for(int j = roi.j; j < roi.j + roi.jlen; j++){
 		for(int i = roi.i; i < roi.i + roi.ilen; i++){
+			//edge detection
+			if(i + offset >= ilim){
+				continue;
+			}
 			//initialize pixel of first column of each row
 			if(i == roi.i){
 				Region col = get1DWindow(tgt,ws,COL,i,j);
@@ -301,16 +300,7 @@ void utility::incrementalSmoothing(image &tgt, int ws, Region roi){
 			}
 			tgt.setPixel(i,j,sum/ws);
 		}
-	}
-
-	for(int i = roi.i; i < roi.i + roi.ilen; i++){
-		for(int j = roi.j; j < roi.j + roi.jlen; j++){
-			// cout << tgt.getPixel(i,j) << " "; 
-		}
-		// cout << endl;
-	}
-
-	
+	}	
 }
 
 

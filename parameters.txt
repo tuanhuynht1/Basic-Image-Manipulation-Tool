@@ -3,8 +3,9 @@ frog.ppm testing1.ppm bicolor 1
 baboon.pgm testing2.pgm thresholding 2
 10 100 80 250 50 150
 120 120 350 320 180 220
-baboon.pgm testing3.pgm smooth2D 2
-150 200 250 250 30
-0 0 100 512 15
+baboon.pgm testing3.pgm smooth2D 1
+5 5 200 200 9
 baboon.pgm testing4.pgm smooth1D 1
+5 5 200 200 9
+baboon.pgm testing5.pgm smooth++ 1
 5 5 200 200 9

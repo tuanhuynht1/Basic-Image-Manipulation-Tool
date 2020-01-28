@@ -1,25 +1,24 @@
 /************************************************************
- *															*
- * This sample project include three functions:				*
- * 1. Add intensity for gray-level image.					*
- *    Input: source image, output image name, value			*
- *															*
- * 2. Image thresholding: pixels will become black if the	*
- *    intensity is below the threshold, and white if above	*
- *    or equal the threhold.								*
- *    Input: source image, output image name, threshold		*
- *															*
- * 3. Image scaling: reduction/expansion of 2 for 			*
- *    the width and length. This project uses averaging 	*
- *    technique for reduction and pixel replication			*
- *    technique for expansion.								*
- *    Input: source image, output image name, scale factor	*
- *															*
+*	Basic Image Manipulations								*
+*		Author: Tuan Huynh									*
+*															*
+* This project includes five functions:						*
+* 															*
+* Point Functions											*
+* 		double threshold binarization						*
+* 		binarization with color threshold					*
+* 															*
+* Localized Functions										*
+* 		2D uniform smoothing								*
+* 		1D uniform smoothing								*
+* 		Incremental uniform smoothing						*
+*															*
  ************************************************************/
 
 #include "utility.h"
 #include "image.h"
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
@@ -31,8 +30,6 @@ int main (int argc, char** argv)
 	FILE *fp;
 	char str[MAXLEN];
 	char outfile[MAXLEN];
-
-	//vector<Region> regions;
 
 	if ((fp = fopen(argv[1],"r")) == NULL) {
 		fprintf(stderr, "Can't open file: %s\n", argv[1]);
@@ -59,6 +56,11 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
+					//three region limit
+					if(i > 2){
+						continue;
+					}
+
 					argV = utility::parse(str,6);
 					i_origin = atoi(argV[0]);
 					j_origin = atoi(argV[1]);
@@ -67,6 +69,7 @@ int main (int argc, char** argv)
 					t1 = atoi(argV[4]);
 					t2 = atoi(argV[5]);
 					Region roi(rows,cols,i_origin,j_origin);
+
 					utility::thresholding(tgt,t1,t2,roi);
 				}
 			}
@@ -78,6 +81,11 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
+					//three region limit
+					if(i > 2){
+						continue;
+					}
+
 					argV = utility::parse(str,9);
 					i_origin = atoi(argV[0]);
 					j_origin = atoi(argV[1]);
@@ -89,6 +97,7 @@ int main (int argc, char** argv)
 					tc = atoi(argV[7]);
 					dc = atoi(argV[8]);
 					Region roi(rows,cols,i_origin,j_origin);
+
 					utility::colorBinarization(tgt,Color(r,g,b),tc,dc,roi);
 				}
 			}
@@ -100,6 +109,11 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
+					//three region limit
+					if(i > 2){
+						continue;
+					}
+
 					argV = utility::parse(str,5);
 					i_origin = atoi(argV[0]);
 					j_origin = atoi(argV[1]);
@@ -107,7 +121,11 @@ int main (int argc, char** argv)
 					cols = atoi(argV[3]);
 					ws = atoi(argV[4]);
 					Region roi(rows,cols,i_origin,j_origin);
+
+					auto started = chrono::high_resolution_clock::now();
 					utility::twoDimensionalSmoothing(tgt,ws,roi);
+					auto done = chrono::high_resolution_clock::now();
+					cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (2D)" << endl;
 				}
 			}
 		}
@@ -118,6 +136,11 @@ int main (int argc, char** argv)
 			tgt.copyImage(src);
 			for (int i = 0; i < numberOfRegions; i++){
 				if (fgets(str,MAXLEN,fp) != NULL){
+					//three region limit
+					if(i > 2){
+						continue;
+					}
+
 					argV = utility::parse(str,5);
 					i_origin = atoi(argV[0]);
 					j_origin = atoi(argV[1]);
@@ -125,7 +148,38 @@ int main (int argc, char** argv)
 					cols = atoi(argV[3]);
 					ws = atoi(argV[4]);
 					Region roi(rows,cols,i_origin,j_origin);
+
+					auto started = chrono::high_resolution_clock::now();
 					utility::oneDimensionalSmoothing(tgt,ws,roi);
+					auto done = chrono::high_resolution_clock::now();
+					cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (1D)" << endl;
+				}
+			}
+		}
+		//----------------------------------------------------- Incremental SMOOTHING ------------//
+		else if(strncasecmp(op,"smooth++",MAXLEN) == 0){
+			int ws;
+			//copy source image to target
+			tgt.copyImage(src);
+			for (int i = 0; i < numberOfRegions; i++){
+				if (fgets(str,MAXLEN,fp) != NULL){
+					//three region limit
+					if(i > 2){
+						continue;
+					}
+
+					argV = utility::parse(str,5);
+					i_origin = atoi(argV[0]);
+					j_origin = atoi(argV[1]);
+					rows = atoi(argV[2]);
+					cols = atoi(argV[3]);
+					ws = atoi(argV[4]);
+					Region roi(rows,cols,i_origin,j_origin);
+					
+					auto started = chrono::high_resolution_clock::now();
+					utility::incrementalSmoothing(tgt,ws,roi);
+					auto done = chrono::high_resolution_clock::now();
+					cout << chrono::duration_cast<chrono::milliseconds>(done-started).count() << " ms (inc)" << endl;
 				}
 			}
 		}
@@ -137,20 +191,6 @@ int main (int argc, char** argv)
 		tgt.save(outfile);
 	}
 	fclose(fp);
-	char f[] = "baboon.pgm";
-	tgt.read(f);
-	Region r(200,200,5,5);
-	// cout << tgt.getPixel(5,5) << endl;
-	// for(int i = r.i ; i < r.i + r.ilen; i++){
-	// 	for(int j = r.j - 1; j < r.j + r.jlen + 1; j++){
-	// 		cout << tgt.getPixel(r.i,j) << " ";
-	// 	}
-	// 	cout << endl;
-	// }
-	// cout << "---------" << endl;
-	cout << "incremental" << endl;
-	utility::incrementalSmoothing(tgt,9,r);
-	tgt.save("testing5.pgm");
 
 	return 0;
 }
