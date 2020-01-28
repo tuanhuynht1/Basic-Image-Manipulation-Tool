@@ -70,6 +70,11 @@ int main (int argc, char** argv)
 					t2 = atoi(argV[5]);
 					Region roi(rows,cols,i_origin,j_origin);
 
+					//swap if lower bound is greater than upper bound
+					if (t1 > t2){
+						swap(t1,t2);
+					}
+
 					utility::thresholding(tgt,t1,t2,roi);
 				}
 			}
@@ -175,7 +180,7 @@ int main (int argc, char** argv)
 					cols = atoi(argV[3]);
 					ws = atoi(argV[4]);
 					Region roi(rows,cols,i_origin,j_origin);
-					
+
 					auto started = chrono::high_resolution_clock::now();
 					utility::incrementalSmoothing(tgt,ws,roi);
 					auto done = chrono::high_resolution_clock::now();
